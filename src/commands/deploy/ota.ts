@@ -212,9 +212,14 @@ export default class DeployOta extends Command {
 
       // Step 3-6: Build Steps
       if (!flags.skipBuild) {
+        const buildCwd = projectConfig.monorepoRoot
+          ? path.resolve(root, projectConfig.monorepoRoot)
+          : undefined
         await runBuildSteps(
           {
             active: active!,
+            buildCwd,
+            buildPackage: projectConfig.packageName,
             env,
             platform: 'android',
             required: required!,

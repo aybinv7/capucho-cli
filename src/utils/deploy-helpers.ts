@@ -8,6 +8,8 @@ import {promisify} from 'node:util'
 
 export interface DeployConfig {
   active: boolean
+  buildCwd?: string
+  buildPackage?: string
   channel?: string
   env: string
   note?: string
@@ -78,7 +80,11 @@ export async function runBuildSteps(
 
   // Step 4: Build
   progress.nextStep(`[4/${totalSteps}] Building for ${env}...`)
-  await runCommand(`pnpm build:${env}`, root, true)
+  const buildCwd = config.buildCwd ?? root
+  const buildCmd = config.buildPackage
+    ? `vp run ${config.buildPackage}#build:${env}`
+    : `pnpm build:${env}`
+  await runCommand(buildCmd, buildCwd, true)
 
   // Step 5: Trapeze
   progress.nextStep(`[5/${totalSteps}] Running Trapeze...`)

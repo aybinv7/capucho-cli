@@ -25,11 +25,13 @@ export interface CloudFlavor {
 }
 
 export interface ProjectConfig {
-  appId: string // com.example.app
-  cloudAppId: string // uuid from cloud
+  appId: string
+  cloudAppId: string
   appName: string
   ghPagesRepo?: string
   createdAt: string
+  monorepoRoot?: string
+  packageName?: string
 }
 
 export interface CloudOrganization {

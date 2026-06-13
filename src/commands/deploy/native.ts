@@ -196,9 +196,14 @@ export default class DeployNative extends Command {
       const apiUrl = freshConfig.endpoint as string
 
       // Step 3-6: Build Steps
+      const buildCwd = projectConfig.monorepoRoot
+        ? path.resolve(root, projectConfig.monorepoRoot)
+        : undefined
       await runBuildSteps(
         {
           active: active!,
+          buildCwd,
+          buildPackage: projectConfig.packageName,
           env,
           platform: flags.platform,
           required: required!,
