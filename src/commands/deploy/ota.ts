@@ -52,6 +52,10 @@ export default class DeployOta extends Command {
       default: false,
       description: 'Skip build step',
     }),
+    githubPages: Flags.boolean({
+      default: false,
+      description: 'Publish generated assets to the configured GitHub Pages repository',
+    }),
     version: Flags.string({
       char: 'v',
       description: 'Version bump type',
@@ -244,17 +248,14 @@ export default class DeployOta extends Command {
         throw new Error('Bundle zip not created!')
       }
 
-      // Step 8: Deploy Assets to GH Pages
-      progress.nextStep(`[8/${totalSteps}] Deploying assets to GitHub Pages...`)
-      if (!flags.skipAsset) {
-        try {
-          const repoUrl = projectConfig.ghPagesRepo || 'https://github.com/inventor7/Vuena.git'
-          await deployToGhPages(path.join(root, 'dist'), repoUrl)
-        } catch (err) {
-          this.warn('Failed to deploy assets to GitHub Pages. Continuing with OTA...')
+      progress.nextStep(`[8/${totalSteps}] Publishing generated assets...`)
+      if (flags.githubPages) {
+        if (!projectConfig.ghPagesRepo) {
+          throw new Error('GitHub Pages publishing requires ghPagesRepo in .capucho/project.json')
         }
+        await deployToGhPages(path.join(root, 'dist'), projectConfig.ghPagesRepo)
       } else {
-        progress.updateMessage(`[8/${totalSteps}] Skipping asset deployment...`)
+        progress.updateMessage(`[8/${totalSteps}] Skipping GitHub Pages publishing...`)
       }
 
       // Step 9: Upload to Capucho Cloud

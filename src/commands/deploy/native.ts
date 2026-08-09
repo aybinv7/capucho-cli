@@ -33,6 +33,10 @@ export default class DeployNative extends Command {
     required: Flags.boolean({allowNo: true, char: 'r', default: undefined, description: 'Mark as required update'}),
     skipAsset: Flags.boolean({char: 's', default: false, description: 'Skip asset generation'}),
     skipBuild: Flags.boolean({default: false, description: 'Skip build step'}),
+    githubPages: Flags.boolean({
+      default: false,
+      description: 'Publish generated assets to the configured GitHub Pages repository',
+    }),
     version: Flags.string({
       char: 'v',
       default: undefined,
@@ -236,17 +240,14 @@ export default class DeployNative extends Command {
         throw new Error(`Native build artifact not found! Checked variants for '${type}'.`)
       }
 
-      // Step 8: Deploy Assets to GH Pages
-      progress.nextStep(`[8/${totalSteps}] Deploying assets to GitHub Pages...`)
-      if (!flags.skipAsset) {
-        try {
-          const repoUrl = projectConfig.ghPagesRepo || 'https://github.com/inventor7/Vuena.git'
-          await deployToGhPages(path.join(root, 'dist'), repoUrl)
-        } catch (err) {
-          this.warn('Failed to deploy assets to GitHub Pages. Continuing with native upload...')
+      progress.nextStep(`[8/${totalSteps}] Publishing generated assets...`)
+      if (flags.githubPages) {
+        if (!projectConfig.ghPagesRepo) {
+          throw new Error('GitHub Pages publishing requires ghPagesRepo in .capucho/project.json')
         }
+        await deployToGhPages(path.join(root, 'dist'), projectConfig.ghPagesRepo)
       } else {
-        progress.updateMessage(`[8/${totalSteps}] Skipping asset deployment...`)
+        progress.updateMessage(`[8/${totalSteps}] Skipping GitHub Pages publishing...`)
       }
 
       // Step 9: Upload to Capucho Cloud

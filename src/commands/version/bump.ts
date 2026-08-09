@@ -17,6 +17,11 @@ export default class VersionBump extends Command {
 
   static description = 'Bump version and sync to env files'
   static flags = {
+    environment: Flags.string({
+      char: 'e',
+      description: 'Environment whose version code is incremented',
+      options: ['dev', 'staging', 'prod'],
+    }),
     'git-tag-version': Flags.boolean({
       allowNo: true,
       default: false, // Default to false as per legacy script behavior
@@ -53,7 +58,11 @@ export default class VersionBump extends Command {
       // SImple approach: `await VersionSync.run(['--bump'])` (handles args parsing again)
 
       this.log(chalk.green('[1] Syncing version to env files...'))
-      await VersionSync.run(['--bump']) // Sync all envs and bump codes
+      const syncArgs = ['--bump']
+      if (flags.environment) {
+        syncArgs.push('--environment', flags.environment)
+      }
+      await VersionSync.run(syncArgs)
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error)
       this.error(errorMessage)

@@ -73,7 +73,7 @@ export async function runBuildSteps(
   // Step 3: Asset Generation
   progress.nextStep(`[3/${totalSteps}] Generating assets for ${env}...`)
   if (!skipAsset) {
-    await runCommand(`npm run assets:${env}`, root, true)
+    await runCommand(`pnpm run assets:${env}`, root, true)
   } else {
     progress.updateMessage(`[3/${totalSteps}] Skipping assets...`)
   }
@@ -82,7 +82,7 @@ export async function runBuildSteps(
   progress.nextStep(`[4/${totalSteps}] Building for ${env}...`)
   const buildCwd = config.buildCwd ?? root
   const buildCmd = config.buildPackage
-    ? `vp run ${config.buildPackage}#build:${env}`
+    ? `pnpm exec vp run ${config.buildPackage}#build:${env}`
     : `pnpm build:${env}`
   await runCommand(buildCmd, buildCwd, true)
 
@@ -92,7 +92,7 @@ export async function runBuildSteps(
 
   // Step 6: Capacitor Sync
   progress.nextStep(`[6/${totalSteps}] Syncing Capacitor...`)
-  await runCommand(`npx cap sync ${platform}`, root, true)
+  await runCommand(`pnpm exec cap sync ${platform}`, root, true)
 }
 
 /**

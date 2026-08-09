@@ -74,10 +74,15 @@ export class ConfigManager {
   public async loadConfig(flags: Partial<CapuchoConfig> = {}): Promise<CapuchoConfig> {
     const globalConfig = await this.readJsonFile(this.getGlobalConfigPath())
     const projectConfig = await this.readJsonFile(this.getProjectConfigPath())
+    const environmentConfig: Partial<CapuchoConfig> = {
+      ...(process.env.CAPUCHO_API_KEY ? {apiKey: process.env.CAPUCHO_API_KEY} : {}),
+      ...(process.env.CAPUCHO_ENDPOINT ? {endpoint: process.env.CAPUCHO_ENDPOINT} : {}),
+    }
 
     return {
       ...globalConfig,
       ...projectConfig,
+      ...environmentConfig,
       ...flags,
     }
   }
