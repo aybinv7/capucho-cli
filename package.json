@@ -1,7 +1,7 @@
 {
   "name": "capucho-cli",
   "description": "Capucho CLI bundles and uploads your application to the cloud. It packages builds as native artifacts or ZIP files, then publishes them using user-defined parameters such as channels and custom release options. Built for simple, repeatable deployments, it integrates cleanly into local workflows and CI pipelines to ship updates quickly and reliably.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": "aybinv7",
   "bin": {
     "capucho-cli": "./bin/run.js"
@@ -78,6 +78,7 @@
   "repository": "inventor7/capucho-cli",
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
+    "prepare": "pnpm build",
     "lint": "eslint",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "pnpm run lint",
