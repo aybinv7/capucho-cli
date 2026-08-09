@@ -26,7 +26,7 @@ Use a GitHub release tag such as `presalio-v20.0.1` for a monorepo application. 
 The repository consuming Capucho should pin this action to a released Capucho CLI tag:
 
 ```yaml
-- uses: aybinv7/capucho-cli@v0.1.1
+- uses: aybinv7/capucho-cli@v0.1.2
   with:
     project-directory: apps/presalio
     channel: staging
